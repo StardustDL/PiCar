@@ -2,37 +2,36 @@ function randint(min, max) {
     return Math.floor(Math.random() * (max - min)) + min;
 }
 
-function line(direction, speed = 10) {
+function line(direction) {
     data.motor.A.direction = direction;
     data.motor.B.direction = direction;
-    data.motor.A.speed = speed;
-    data.motor.B.speed = speed;
 }
 
-function left(speed = 10) {
+function left() {
     data.motor.A.direction = 1;
     data.motor.B.direction = 0;
-    data.motor.A.speed = speed;
-    data.motor.B.speed = speed;
 }
 
-function right(speed = 10) {
+function right() {
     data.motor.A.direction = 0;
     data.motor.B.direction = 1;
+}
+
+function fore() {
+    line(0); 
+}
+
+function back() {
+    line(1);
+}
+
+function speed(speed=10) {
     data.motor.A.speed = speed;
     data.motor.B.speed = speed;
-}
-
-function fore(speed = 10) {
-    line(0, speed);
-}
-
-function back(speed = 10) {
-    line(1, speed);
 }
 
 function stop() {
-    line(0, 0);
+    speed(0);
 }
 
 function speedup(speed=10) {

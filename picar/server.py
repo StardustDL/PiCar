@@ -31,8 +31,11 @@ class WebServer:
         self.port = port
         self.server = None
         self.wwwroot = os.path.join(os.path.split(__file__)[0], "wwwroot")
+        self.host = "192.168.208.108"
 
     def _core(self, environ, start_response):
+        host = environ.get("HTTP_HOST", "192.168.208.108:19090")
+        self.host = host.split(":")[0]
         method = environ.get("REQUEST_METHOD", "GET")
         path = environ.get("PATH_INFO", "/")
         contentLength = environ.get("CONTENT_LENGTH", "0")
@@ -71,6 +74,8 @@ class WebServer:
         if path.endswith(".html") or path.endswith(".css") or path.endswith(".js"):
             with open(fp, "r") as f:
                 text = "".join(f.readlines())
+                if path == "/index.html":
+                    text = text.replace("192.168.208.108", self.host)
                 if path.endswith(".html"):
                     return _html(text)
                 elif path.endswith(".css"):
