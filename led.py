@@ -14,7 +14,7 @@ class Led:
     def __init__(self, manager, index):
         self.manager = manager
         self.index = index
-        self.color = (0,0,0,0)
+        self.close()
 
     def close(self):
         self.color = (0,0,0,0)
