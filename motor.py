@@ -39,17 +39,11 @@ class Motor:
     def __del__(self):
         self.pwm.stop()
 
-_A, _B = None, None
-
 def getMotorA():
-    global _A
-    if _A is None:
-        _A = Motor(12, 13, 6)
+    _A = Motor(12, 13, 6)
     return _A
 
 def getMotorB():
-    global _B
-    if _B is None:
-        _B = Motor(20, 21, 26)
+    _B = Motor(20, 21, 26)
     return _B
 

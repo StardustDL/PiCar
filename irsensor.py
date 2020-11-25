@@ -9,7 +9,7 @@ _DIG_LEFT = 16
 _DIG_RIGHT = 19
 
 
-class IRSersor:
+class IRSensor:
     def __init__(self):
         GPIO.setup((_ANA_CS, _ANA_CLOCK, _ANA_ADDRESS), GPIO.OUT)
         GPIO.setup((_ANA_DATAOUT, _DIG_LEFT, _DIG_RIGHT), GPIO.IN, GPIO.PUD_UP)
