@@ -1,3 +1,0 @@
-import init
-
-init.init()

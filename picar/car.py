@@ -1,14 +1,14 @@
-import init
-import joystick
-import servo
-import led
-import irremote
-import irsensor
-import motor
-import distance
+from . import init
+from . import joystick
+from . import servo
+from . import led
+from . import irremote
+from . import irsensor
+from . import motor
+from . import distance
+from .irremote import Key
 import threading
 import time
-from irremote import Key
 
 class Car:
     def __init__(self):
