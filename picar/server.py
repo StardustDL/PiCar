@@ -53,7 +53,7 @@ class WebServer:
 
     def _get(self, path):
         if path.startswith("/api/"):
-            return sel._get_api(path.replace("/api/", ""))
+            return self._get_api(path.replace("/api/", ""))
         if path == "/":
             path = "/index.html"
 
