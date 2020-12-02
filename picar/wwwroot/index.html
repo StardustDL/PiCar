@@ -1,0 +1,24 @@
+<html>
+	<head>
+		<title>PiCar</title>
+	</head>
+	<body>
+		<h1>Hello PiCar!</h1>
+		<div id="app">
+			Counter: {{ counter }}
+		</div>
+		<script src="/framework/vue@next.js"></script>
+	<script>
+		const Counter = {
+			data() {
+				return {
+					counter: 0
+				}
+			}
+		};
+		var app = Vue.createApp(Counter);
+		app.mount("#app");
+	</script>
+
+	</body>
+</html>

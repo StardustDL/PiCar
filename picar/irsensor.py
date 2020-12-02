@@ -17,16 +17,16 @@ class IRSensor:
     def analog(self):
         value = [0] * 6
         for j in range(6):
-            GPIO.output(_CS, GPIO.LOW)
+            GPIO.output(_ANA_CS, GPIO.LOW)
             for i in range(10):
                 if i < 4:
                     bit = (((j) >> (3-i)) & 0x01)
-                    GPIO.output(_ADDRESS, bit)
+                    GPIO.output(_ANA_ADDRESS, bit)
                 value[j] <<= 1
-                value[j] |= GPIO.input(_DATAOUT)
-                GPIO.output(_CLOCK, GPIO.HIGH)
-                GPIO.output(_CLOCK, GPIO.LOW)
-            GPIO.output(_CS, GPIO.HIGH)
+                value[j] |= GPIO.input(_ANA_DATAOUT)
+                GPIO.output(_ANA_CLOCK, GPIO.HIGH)
+                GPIO.output(_ANA_CLOCK, GPIO.LOW)
+            GPIO.output(_ANA_CS, GPIO.HIGH)
             time.sleep(0.0001)
         return value[1:]
    
