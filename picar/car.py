@@ -11,6 +11,69 @@ import threading
 import time
 
 
+class CarController:
+    def __init__(self, car: "Car", handler, **kwargs):
+        self.car = car
+        self.handler = handler
+        self.closed = False
+        self.kwargs = kwargs
+        self.thread = threading.Thread(target=self._run)
+
+    def _run(self):
+        self.handler(self, **self.kwargs)
+
+    def run(self):
+        self.thread.start()
+
+    def shutdown(self):
+        self.closed = True
+        self.thread.join()
+
+
+def infraredRemoteController(cc: CarController, speed=10):
+    speed = min(99, max(0, speed))
+    origin = speed
+    while not cc.closed:
+        key = cc.car.irremote.recieve()
+        if key is Key.Num2:
+            cc.car.fore(speed=speed)
+        elif key is Key.Num8:
+            cc.car.back(speed=speed)
+        elif key is Key.Num5:
+            cc.car.stop()
+        elif key is Key.Num4:
+            cc.car.left(speed=speed)
+        elif key is Key.Num6:
+            cc.car.right(speed=speed)
+        elif key is Key.Minus:
+            speed = max(0, speed - 10)
+            cc.car.line(speed=speed)
+        elif key is Key.Plus:
+            speed = min(99, speed + 10)
+            cc.car.line(speed=speed)
+        elif key is Key.EQ:
+            speed = origin
+            cc.car.line(speed=speed)
+
+
+def selfTraceController(cc: CarController, start=None, diff=100, speed=10, interval=0.1):
+    if start is None or len(start) != 4:
+        start = cc.car.irsensor.analog()
+    while not cc.closed:
+        current = cc.car.irsensor.analog()
+
+        dis = 0
+        for i in range(4):
+            dis += abs(start[i] - current[i])
+
+        if dis > diff:
+            cc.car.left(speed)
+        else:
+            cc.car.line(speed, 0)
+
+        time.sleep(interval)
+
+
 class Car:
     def __init__(self):
         init.init()
@@ -23,26 +86,60 @@ class Car:
         self.motorB = motor.getMotorB()
         # self.servo = servo.ServoManager()
         self.motors = (self.motorA, self.motorB)
+        self.controller_ir = None
+        self.controller_st = None
 
-    def run(self, speed=10, direction=None):
+    def start_controller_ir(self, speed=10):
+        if self.controller_ir is not None:
+            return
+        self.controler_ir = CarController(
+            self, infraredRemoteController, speed=speed)
+        self.controler_ir.run()
+
+    def stop_controller_ir(self):
+        if self.controller_ir is None:
+            return
+        self.controler_ir.shutdown()
+        self.controler_ir = None
+
+    def start_controller_st(self, start=None, diff=100, speed=10, interval=0.1):
+        if self.controller_st is not None:
+            return
+        self.controler_st = CarController(
+            self, selfTraceController, start=start, diff=diff, speed=speed, interval=interval)
+        self.controler_st.run()
+
+    def stop_controller_st(self):
+        if self.controller_st is None:
+            return
+        self.controler_st.shutdown()
+        self.controler_st = None
+
+    def line(self, speed=10, direction=None):
         speed = min(99, max(0, speed))
         for motor in self.motors:
             if direction is not None:
                 motor.direction = direction
             motor.speed = speed
 
-    def wait(self):
-        self.run(speed=0)
+    def stop(self):
+        self.line(speed=0)
+
+    def fore(self, speed=10):
+        self.line(direction=0, speed=speed)
+
+    def back(self, speed=10):
+        self.line(direction=1, speed=speed)
 
     def left(self, speed=10):
-        self.run(0, 0)
+        self.line(0, 0)
         self.motorA.direction = 1
-        self.run(speed=speed)
+        self.line(speed=speed)
 
     def right(self, speed=10):
-        self.run(0, 0)
+        self.line(0, 0)
         self.motorB.direction = 1
-        self.run(speed=speed)
+        self.line(speed=speed)
 
     def __del__(self):
         del self.joystick
@@ -54,28 +151,3 @@ class Car:
         del self.motorB
         # del self.servo
         init.cleanup()
-
-    def runByRemote(self, speed=10):
-        speed = min(99, max(0, speed))
-        origin = speed
-        while True:
-            key = self.irremote.recieve()
-            if key is Key.Num2:
-                self.run(direction=0, speed=speed)
-            elif key is Key.Num8:
-                self.run(direction=1, speed=speed)
-            elif key is Key.Num5:
-                self.wait()
-            elif key is Key.Num4:
-                self.left(speed=speed)
-            elif key is Key.Num6:
-                self.right(speed=speed)
-            elif key is Key.Minus:
-                speed = max(0, speed - 10)
-                self.run(speed=speed)
-            elif key is Key.Plus:
-                speed = min(99, speed + 10)
-                self.run(speed=speed)
-            elif key is Key.EQ:
-                speed = origin
-                self.run(speed=speed)

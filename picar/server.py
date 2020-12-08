@@ -1,3 +1,4 @@
+from picar.car import Car
 from wsgiref.simple_server import make_server
 import json
 import random
@@ -100,11 +101,16 @@ class WebServer:
                 "speed": self.car.motorB.speed
             }
         }
+        controller = {
+            "ir": self.car.controller_ir is not None,
+            "st": self.car.controller_st is not None,
+        }
 
         state = {
             "led": led,
             "irsensor": irsensor,
-            "motor": motor
+            "motor": motor,
+            "controller": controller
         }
 
         return _json(state)
@@ -135,13 +141,32 @@ class WebServer:
                             break
                         self.car.led.leds[i].color = tuple(v)
 
+            controller = obj.get("controller")
+            if controller:
+                irup = controller.get("ir_up")
+                if irup:
+                    self.car.start_controller_ir(**irup)
+                irdown = controller.get("ir_down")
+                if irdown:
+                    self.car.stop_controller_ir()
+                
+                stup = controller.get("st_up")
+                if stup:
+                    self.car.start_controller_st(**stup)
+                stdown = controller.get("st_down")
+                if stdown:
+                    self.car.stop_controller_st()
+
             return _plain("Success")
         except:
             return _plain("Fail")
 
     def run(self):
         self.server = make_server("0.0.0.0", self.port, self._core)
-        self.server.serve_forever()
+        self.server.serve_forever(1)
+    
+    def shutdown(self):
+        self.server.server_close()
 
 
 class FakeLed:
@@ -173,12 +198,14 @@ class FakeMotor:
         self.direction = random.randint(0, 1)
 
 
-class FakeCar:
+class FakeCar(Car):
     def __init__(self):
         self.led = FakeLeds()
         self.irsensor = FakeIRSensor()
         self.motorA = FakeMotor()
         self.motorB = FakeMotor()
+        self.controller_ir = None
+        self.controller_st = None
 
 
 if __name__ == "__main__":

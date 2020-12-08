@@ -1,5 +1,5 @@
 from enum import Enum
-
+import selectors
 
 class Key(Enum):
     CHMinus = 0x45
@@ -28,10 +28,15 @@ class Key(Enum):
 class IRRemote:
     def __init__(self):
         self.input = open("/dev/input/event0", "rb")
+        self.selector = selectors.DefaultSelector()
+        self.selector.register(self.input, selectors.EVENT_READ)
 
     def __del__(self):
         self.input.close()
 
     def recieve(self):
+        events = self.selector.select(1)
+        if len(events) == 0:
+            return None
         value = int(self.input.read(48).hex()[40:42], base=16)
         return Key(value)
