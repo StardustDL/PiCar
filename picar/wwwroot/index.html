@@ -7,6 +7,7 @@
 
 	<title>PiCar</title>
 	<link rel="stylesheet" href="/framework/bootstrap.min.css">
+	<link rel="stylesheet" href="/site.css">
 </head>
 
 <body>
@@ -18,21 +19,19 @@
 				<span class="navbar-toggler-icon"></span>
 			</button>
 		</nav>
-		<div class="container">
+		<div class="container-fluid">
 			<div class="row">
-				<div class="col">
+				<div class="col-3">
 					<h1>State</h1>
 					<br />
 					<h2>Motor</h2>
-					<div class="progress m-1" style="height: 30px;">
-						<div class="progress-bar" style="background-color: #e9ecef;"
-							v-bind:style="{ width: motorALeft }"></div>
+					<div class="progress m-1">
+						<div class="progress-bar prograss-bar-hide" v-bind:style="{ width: motorALeft }"></div>
 						<div class="progress-bar progress-bar-striped progress-bar-animated"
 							v-bind:style="{ width: motorA }">A</div>
 					</div>
-					<div class="progress m-1" style="height: 30px;">
-						<div class="progress-bar" style="background-color: #e9ecef;"
-							v-bind:style="{ width: motorBLeft }"></div>
+					<div class="progress m-1">
+						<div class="progress-bar prograss-bar-hide" v-bind:style="{ width: motorBLeft }"></div>
 						<div class="progress-bar progress-bar-striped progress-bar-animated"
 							v-bind:style="{ width: motorB }">B</div>
 					</div>
@@ -59,125 +58,93 @@
 					<p>Right: {{ irsensor.right }}</p>
 					<p>Analog: {{ irsensor.analog }}</p>
 					<br />
-
+				</div>
+				<div class="col-3">
+					<h1>Operation</h1>
+					<br />
+					<h2>Motor</h2>
+					<div class="input-group m-1">
+						<div class="input-group-prepend">
+							<span class="input-group-text">A</span>
+						</div>
+						<input type="number" class="form-control" v-model="model.motor.A" min="-99" max="99">
+						<div class="input-group-append">
+							<button class="btn" type="button" @click="onApplyMotorA">Apply</button>
+						</div>
+					</div>
+					<div class="input-group m-1">
+						<div class="input-group-prepend">
+							<span class="input-group-text">B</span>
+						</div>
+						<input type="number" class="form-control" v-model="model.motor.B" min="-99" max="99">
+						<div class="input-group-append">
+							<button class="btn" type="button" @click="onApplyMotorB">Apply</button>
+						</div>
+					</div>
+					<br />
+					<h2>LED</h2>
+					<div class="input-group m-1">
+						<div class="input-group-prepend">
+							<span class="input-group-text">Brightness</span>
+						</div>
+						<input type="number" class="form-control" v-model="model.led.brightness" min="0" max="255">
+						<div class="input-group-append">
+							<button class="btn" type="button" @click="onApplyLedBrightness">Apply</button>
+						</div>
+					</div>
+					<ul class="list-group m-1">
+						<li class="list-group-item" v-bind:style="{ 'background-color': led0 }">
+							<span class="badge badge-secondary">LED 0</span>
+							<input class="ml-5" type="color" v-model="led0">
+						</li>
+						<li class="list-group-item" v-bind:style="{ 'background-color': led1 }">
+							<span class="badge badge-secondary">LED 1</span>
+							<input class="ml-5" type="color" v-model="led1">
+						</li>
+						<li class="list-group-item" v-bind:style="{ 'background-color': led2 }">
+							<span class="badge badge-secondary">LED 2</span>
+							<input class="ml-5" type="color" v-model="led2">
+						</li>
+						<li class="list-group-item" v-bind:style="{ 'background-color': led3 }">
+							<span class="badge badge-secondary">LED 3</span>
+							<input class="ml-5" type="color" v-model="led3">
+						</li>
+					</ul>
+					<br />
+					<h2>Camera</h2>
+					<iframe src="http://192.168.208.108:8081" frameborder="0" border="0" marginwidth="0"
+						marginheight="0">
+						Camera
+					</iframe>
 				</div>
 				<div class="col">
 					<h1>Program</h1>
-					<div id="editor">function foo(items) {
-						var x = "All this is syntax highlighted";
-						return x;
-						}</div>
+					<div class="btn-group" role="group">
+						<button type="button" class="btn btn-primary" @click="onCompile">Compile</button>
+						<button type="button" class="btn btn-warning" @click="onRunOnce">Run Once</button>
+						<button type="button" class="btn btn-success" @click="onRun">Run</button>
+						<button type="button" class="btn btn-danger" @click="onStop">Stop</button>
+					</div>
+					<div id="editor" style="left: 10px; bottom: 10px; position: absolute; top: 100px; right: 10px;">
+					</div>
 				</div>
 			</div>
 		</div>
+		<footer class="border-top footer text-muted">
+			<div class="container-fluid">
+				Copyright 2020 - PiCar - StardustDL - <a href="https://github.com/StardustDL/PiCar">GitHub</a>
+			</div>
+		</footer>
 	</div>
-	<!--
-	<iframe src="http://192.168.208.108:8081" frameborder="0" border="0" marginwidth="0" marginheight="0" height="480"
-		width="640">
-		Camera
-	</iframe>
-	-->
 
 	<script src="/framework/jquery-3.3.1.slim.min.js"></script>
 	<script src="/framework/popper.min.js"></script>
 	<script src="/framework/bootstrap.min.js"></script>
 
 	<script src="/framework/vue@next.js"></script>
-	<script>
-		const App = {
-			data() {
-				return {
-					led: {
-						brightness: 128,
-						leds: [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
-					},
-					irsensor: {
-						left: 0,
-						right: 0,
-						analog: [0, 0, 0, 0]
-					},
-					motor: {
-						A: {
-							direction: 0,
-							speed: 0,
-						},
-						B: {
-							direction: 0,
-							speed: 0,
-						}
-					}
-				}
-			},
-			methods: {
-				getLedColor(id) {
-					let value = this.led.leds[id];
-					let s = "#";
-					for (let i = 0; i < 3; i++) {
-						s += value[i].toString(16).padStart(2, "0")
-					}
-					return s;
-				}
-			},
-			computed: {
-				motorALeft() {
-					if (this.motor.A.direction === 0) {
-						let rate = (100 - this.motor.A.speed) / 2;
-						return rate.toString() + "%";
-					}
-					else {
-						return "50%"
-					}
-				},
-				motorA() {
-					let rate = this.motor.A.speed / 2;
-					return rate.toString() + "%";
-				},
-				motorBLeft() {
-					if (this.motor.B.direction === 0) {
-						let rate = (100 - this.motor.B.speed) / 2;
-						return rate.toString() + "%";
-					}
-					else {
-						return "50%"
-					}
-				},
-				motorB() {
-					let rate = this.motor.B.speed / 2;
-					return rate.toString() + "%";
-				},
-			},
-			mounted() {
-				async function getData() {
-					let data = await fetch('/api/').then(res => res.json());
-					console.log(data, 'data');
-					return data;
-				}
+	<script src="/framework/ace/ace.js" type="text/javascript" charset="utf-8"></script>
 
-				setInterval(() => {
-					getData().then(data => {
-						this.led.brightness = data.led.brightness;
-						this.led.leds = data.led.leds;
-						this.irsensor.left = data.irsensor.left;
-						this.irsensor.right = data.irsensor.right;
-						this.irsensor.analog = data.irsensor.analog;
-						this.motor.A.direction = data.motor.A.direction;
-						this.motor.A.speed = data.motor.A.speed;
-						this.motor.B.direction = data.motor.B.direction;
-						this.motor.B.speed = data.motor.B.speed;
-					});
-				}, 1000)
-			}
-		};
-		var app = Vue.createApp(App);
-		app.mount("#app");
-	</script>
-
-	<script src="/ace-builds/src-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
-	<script>
-		var editor = ace.edit("editor");
-		editor.setTheme("ace/theme/monokai");
-		editor.session.setMode("ace/mode/javascript");
-	</script>
+	<script src="/site.js" type="text/javascript" charset="utf-8"></script>
 
 </body>
 

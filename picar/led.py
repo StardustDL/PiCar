@@ -60,6 +60,7 @@ class LedManager:
 
     @brightness.setter
     def brightness(self, value):
+        value = min(255, max(0, value))
         self._brightness = value
         self.strip.setBrightness(self._brightness)
         self.strip.show()

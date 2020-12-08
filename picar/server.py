@@ -113,21 +113,28 @@ class WebServer:
         try:
             body = input_stream.read(length)
             obj = json.loads(body)
-        
-            motor = obj["motor"]
-            motorA = motor["A"]
-            motorB = motor["B"]
 
-            self.car.motorA.direction = motorA["direction"]
-            self.car.motorA.speed = motorA["speed"]
-            self.car.motorB.direction = motorB["direction"]
-            self.car.motorB.speed = motorB["speed"]
+            motor = obj.get("motor")
+            if motor:
+                motorA = motor.get("A")
+                motorB = motor.get("B")
+                if motorA:
+                    self.car.motorA.direction = motorA["direction"]
+                    self.car.motorA.speed = motorA["speed"]
+                if motorB:
+                    self.car.motorB.direction = motorB["direction"]
+                    self.car.motorB.speed = motorB["speed"]
 
-            led = obj["led"]
-            leds = led["leds"]
-            self.car.led.brightness = led["brightness"]
-            for i, v in enumerate(leds):
-                self.car.led.leds[i].color = tuple(v)
+            led = obj.get("led")
+            if led:
+                self.car.led.brightness = led["brightness"]
+                leds = led.get("leds")
+                if leds:
+                    for i, v in enumerate(leds):
+                        if i > 3:
+                            break
+                        self.car.led.leds[i].color = tuple(v)
+
             return _plain("Success")
         except:
             return _plain("Fail")
