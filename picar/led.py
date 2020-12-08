@@ -10,6 +10,7 @@ _LED_INVERT = False
 _LED_CHANNEL = 0
 _LED_STRIP = neopixel.ws.WS2812_STRIP
 
+
 class Led:
     def __init__(self, manager, index):
         self.manager = manager
@@ -17,12 +18,12 @@ class Led:
         self.close()
 
     def close(self):
-        self.color = (0,0,0,0)
+        self.color = (0, 0, 0, 0)
 
     @property
     def color(self):
         return self._color
-    
+
     @color.setter
     def color(self, value):
         if len(value) == 3:
@@ -50,17 +51,15 @@ class LedManager:
             self.strip.setPixelColorRGB(index, red, green, blue, white)
             self.strip.show()
         else:
-            raise Exception(f"Invalid LED index, should be 0-3, but got {index}")
-    
+            raise Exception(
+                f"Invalid LED index, should be 0-3, but got {index}")
+
     @property
     def brightness(self):
         return self._brightness
-    
+
     @brightness.setter
     def brightness(self, value):
         self._brightness = value
         self.strip.setBrightness(self._brightness)
         self.strip.show()
-
-
-

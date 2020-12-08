@@ -10,6 +10,7 @@ from .irremote import Key
 import threading
 import time
 
+
 class Car:
     def __init__(self):
         init.init()
@@ -37,7 +38,7 @@ class Car:
         self.run(0, 0)
         self.motorA.direction = 1
         self.run(speed=speed)
-    
+
     def right(self, speed=10):
         self.run(0, 0)
         self.motorB.direction = 1
@@ -78,4 +79,3 @@ class Car:
             elif key is Key.EQ:
                 speed = origin
                 self.run(speed=speed)
-

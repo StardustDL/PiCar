@@ -2,6 +2,7 @@ import RPi.GPIO as GPIO
 import time
 from enum import Enum
 
+
 class StickType(Enum):
     Center = 7
     Front = 8
@@ -15,10 +16,9 @@ class Joystick:
         self.callback = None
         for pin in StickType:
             GPIO.setup(pin.value, GPIO.IN, GPIO.PUD_UP)
-            GPIO.add_event_detect(pin.value, GPIO.FALLING, callback=self._callback)
+            GPIO.add_event_detect(pin.value, GPIO.FALLING,
+                                  callback=self._callback)
 
     def _callback(self, channel):
         if self.callback:
             self.callback(StickType(channel))
-
-

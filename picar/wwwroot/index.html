@@ -1,27 +1,167 @@
+<!doctype html>
 <html>
-	<head>
-		<title>PiCar</title>
-	</head>
-	<body>
-		<h1>Hello PiCar!</h1>
-		<div id="app">
-			Counter: {{ counter }}
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+	<title>PiCar</title>
+	<link rel="stylesheet" href="/framework/bootstrap.min.css">
+</head>
+
+<body>
+	<div id="app">
+		<nav class="navbar navbar-expand-lg navbar-light bg-light mb-5">
+			<h1 class="navbar-brand" href="#">PiCar</h1>
+			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+				aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+		</nav>
+		<div class="container">
+			<div class="row">
+				<div class="col">
+					<h1>State</h1>
+					<br />
+					<h2>LED</h2>
+					<p>Brightness: {{ led.brightness }}</p>
+					<ul class="list-group m-1">
+						<li class="list-group-item" v-bind:style="{ 'background-color': getLedColor(0) }">
+							<span class="badge badge-secondary">LED 0</span>
+						</li>
+						<li class="list-group-item" v-bind:style="{ 'background-color': getLedColor(1) }">
+							<span class="badge badge-secondary">LED 1</span>
+						</li>
+						<li class="list-group-item" v-bind:style="{ 'background-color': getLedColor(2) }">
+							<span class="badge badge-secondary">LED 2</span>
+						</li>
+						<li class="list-group-item" v-bind:style="{ 'background-color': getLedColor(3) }">
+							<span class="badge badge-secondary">LED 3</span>
+						</li>
+					</ul>
+					<br />
+					<h2>IR Sensor</h2>
+					<p>Left: {{ irsensor.left }}</p>
+					<p>Right: {{ irsensor.right }}</p>
+					<p>Analog: {{ irsensor.analog }}</p>
+					<br />
+					<h2>Motor</h2>
+					<div class="progress m-1" style="height: 30px;">
+						<div class="progress-bar" style="background-color: #e9ecef;" v-bind:style="{ width: motorALeft }"></div>
+						<div class="progress-bar progress-bar-striped progress-bar-animated" v-bind:style="{ width: motorA }">A</div>
+					</div>
+					<div class="progress m-1" style="height: 30px;">
+						<div class="progress-bar" style="background-color: #e9ecef;" v-bind:style="{ width: motorBLeft }"></div>
+						<div class="progress-bar progress-bar-striped progress-bar-animated" v-bind:style="{ width: motorB }">B</div>
+					</div>
+				</div>
+				<div class="col">
+					<h1>Program</h1>
+				</div>
+			</div>
 		</div>
-		<iframe src="http://192.168.208.108:8081" frameborder="0" border="0" marginwidth="0" marginheight="0" height="480" width="640">
-			Camera
-		</iframe>
-		<script src="/framework/vue@next.js"></script>
+	</div>
+	<!--
+	<iframe src="http://192.168.208.108:8081" frameborder="0" border="0" marginwidth="0" marginheight="0" height="480"
+		width="640">
+		Camera
+	</iframe>
+	-->
+
+	<script src="/framework/jquery-3.3.1.slim.min.js"></script>
+	<script src="/framework/popper.min.js"></script>
+	<script src="/framework/bootstrap.min.js"></script>
+
+	<script src="/framework/vue@next.js"></script>
 	<script>
-		const Counter = {
+		const App = {
 			data() {
 				return {
-					counter: 0
+					led: {
+						brightness: 128,
+						leds: [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
+					},
+					irsensor: {
+						left: 0,
+						right: 0,
+						analog: [0, 0, 0, 0]
+					},
+					motor: {
+						A: {
+							direction: 0,
+							speed: 0,
+						},
+						B: {
+							direction: 0,
+							speed: 0,
+						}
+					}
 				}
+			},
+			methods: {
+				getLedColor(id) {
+					let value = this.led.leds[id];
+					let s = "#";
+					for (let i = 0; i < 3; i++) {
+						s += value[i].toString(16).padStart(2, "0")
+					}
+					return s;
+				}
+			},
+			computed: {
+				motorALeft() {
+					if (this.motor.A.direction === 0) {
+						let rate = (100 - this.motor.A.speed) / 2;
+						return rate.toString() + "%";
+					}
+					else {
+						return "50%"
+					}
+				},
+				motorA() {
+					let rate = this.motor.A.speed / 2;
+					return rate.toString() + "%";
+				},
+				motorBLeft() {
+					if (this.motor.B.direction === 0) {
+						let rate = (100 - this.motor.B.speed) / 2;
+						return rate.toString() + "%";
+					}
+					else {
+						return "50%"
+					}
+				},
+				motorB() {
+					let rate = this.motor.B.speed / 2;
+					return rate.toString() + "%";
+				},
+			},
+			mounted() {
+				async function getData() {
+					let data = await fetch('/api/').then(res => res.json());
+					console.log(data, 'data');
+					return data;
+				}
+
+				setInterval(() => {
+					getData().then(data => {
+						this.led.brightness = data.led.brightness;
+						this.led.leds = data.led.leds;
+						this.irsensor.left = data.irsensor.left;
+						this.irsensor.right = data.irsensor.right;
+						this.irsensor.analog = data.irsensor.analog;
+						this.motor.A.direction = data.motor.A.direction;
+						this.motor.A.speed = data.motor.A.speed;
+						this.motor.B.direction = data.motor.B.direction;
+						this.motor.B.speed = data.motor.B.speed;
+					});
+				}, 1000)
 			}
 		};
-		var app = Vue.createApp(Counter);
+		var app = Vue.createApp(App);
 		app.mount("#app");
 	</script>
 
-	</body>
+</body>
+
 </html>

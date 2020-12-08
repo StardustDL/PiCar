@@ -1,25 +1,31 @@
 from wsgiref.simple_server import make_server
 import json
+import random
 import os
 
 
 def _json(obj):
     return "application/json", json.dumps(obj).encode("utf-8")
 
+
 def _plain(text):
     return "text/plain", text.encode("utf-8")
+
 
 def _html(text):
     return "text/html", text.encode("utf-8")
 
+
 def _css(text):
     return "text/css", text.encode("utf-8")
+
 
 def _js(text):
     return "application/javascript", text.encode("utf-8")
 
+
 class WebServer:
-    def __init__(self, car, port=9090):
+    def __init__(self, car, port=19090):
         self.car = car
         self.port = port
         self.server = None
@@ -44,12 +50,12 @@ class WebServer:
 
         if response:
             tp, body = response
-            start_response("200 OK", [("Content-Type", tp), ("Content-Length", str(len(body)))])
+            start_response(
+                "200 OK", [("Content-Type", tp), ("Content-Length", str(len(body)))])
             return [body]
         else:
             start_response("404 Not Found", [("Content-Type", "text/plain")])
             return ["404 Not Found".encode("utf-8")]
-
 
     def _get(self, path):
         if path.startswith("/api/"):
@@ -104,15 +110,52 @@ class WebServer:
         return _json(state)
 
     def _post(self, path, input_stream, length):
-        return None
+        body = input_stream.read(length)
+        print(body)
 
     def run(self):
         self.server = make_server("0.0.0.0", self.port, self._core)
         self.server.serve_forever()
 
-if __name__=="__main__":
-    from . import car
-    c = car.Car()
+
+class FakeLed:
+    def __init__(self):
+        self.color = (random.randint(0, 255), random.randint(
+            0, 255), random.randint(0, 255), 255)
+
+
+class FakeLeds:
+    def __init__(self):
+        self.brightness = 128
+        self.leds = [FakeLed() for _ in range(4)]
+
+
+class FakeIRSensor:
+    def left(self):
+        return random.randint(0, 1)
+
+    def right(self):
+        return random.randint(0, 1)
+
+    def analog(self):
+        return random.randint(0, 1000), random.randint(0, 1000), random.randint(0, 1000), random.randint(0, 1000)
+
+
+class FakeMotor:
+    def __init__(self):
+        self.speed = random.randint(0, 99)
+        self.direction = random.randint(0, 1)
+
+
+class FakeCar:
+    def __init__(self):
+        self.led = FakeLeds()
+        self.irsensor = FakeIRSensor()
+        self.motorA = FakeMotor()
+        self.motorB = FakeMotor()
+
+
+if __name__ == "__main__":
+    c = FakeCar()
     s = WebServer(c)
     s.run()
-

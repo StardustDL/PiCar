@@ -1,5 +1,6 @@
 import Adafruit_PCA9685
 
+
 class Servo:
     def __init__(self, manager, index):
         self.manager = manager
@@ -9,7 +10,7 @@ class Servo:
     @property
     def angle(self):
         return self._angle
-    
+
     @angle.setter
     def angle(self, value):
         self._angle = value
@@ -25,4 +26,3 @@ class ServoManager:
     def apply(self, index, angle):
         value = 4095 * (angle * 11 + 500) / 20000
         self.pwm.set_pwm(index, 0, int(value))
-

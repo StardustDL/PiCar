@@ -29,11 +29,9 @@ class IRSensor:
             GPIO.output(_ANA_CS, GPIO.HIGH)
             time.sleep(0.0001)
         return value[1:]
-   
+
     def left(self):
         return GPIO.input(_DIG_LEFT)
 
     def right(self):
         return GPIO.input(_DIG_RIGHT)
-
-

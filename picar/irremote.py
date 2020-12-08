@@ -1,5 +1,6 @@
 from enum import Enum
 
+
 class Key(Enum):
     CHMinus = 0x45
     CH = 0x46
@@ -34,6 +35,3 @@ class IRRemote:
     def recieve(self):
         value = int(self.input.read(48).hex()[40:42], base=16)
         return Key(value)
-
-
-
