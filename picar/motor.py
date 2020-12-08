@@ -19,6 +19,8 @@ class Motor:
 
     @direction.setter
     def direction(self, value):
+        if value != 0:
+            value = 1
         self._direction = value
         if value == 0:
             GPIO.output((self.a, self.b), (0, 1))
@@ -31,11 +33,9 @@ class Motor:
 
     @speed.setter
     def speed(self, value):
-        if 0 <= value <= 99:
-            self._speed = value
-            self.pwm.ChangeDutyCycle(self._speed)
-        else:
-            raise Exception(f"Speed should be in [0, 99], but got {value}")
+        value = min(99, max(value, 0))
+        self._speed = value
+        self.pwm.ChangeDutyCycle(self._speed)
 
     def __del__(self):
         self.pwm.stop()
