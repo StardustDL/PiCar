@@ -18,6 +18,17 @@
 				aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 				<span class="navbar-toggler-icon"></span>
 			</button>
+
+			<div class="collapse navbar-collapse" id="navbarSupportedContent">
+				<ul class="navbar-nav mr-auto">
+
+				</ul>
+				<div class="btn-group" role="group">
+					<button class="btn btn-outline-primary" @click="onUpdate">Update</button>
+					<button class="btn" :class="{ 'btn-outline-danger': watching, 'btn-outline-success': !watching}"
+						@click="onWatch">{{ watching ? "Unwatch" : "Watch" }}</button>
+				</div>
+			</div>
 		</nav>
 		<div class="container-fluid">
 			<div class="row">
@@ -26,29 +37,29 @@
 					<br />
 					<h2>Motor</h2>
 					<div class="progress m-1">
-						<div class="progress-bar prograss-bar-hide" v-bind:style="{ width: motorALeft }"></div>
-						<div class="progress-bar progress-bar-striped progress-bar-animated"
-							v-bind:style="{ width: motorA }">A</div>
+						<div class="progress-bar prograss-bar-hide" :style="{ width: motorALeft }"></div>
+						<div class="progress-bar progress-bar-striped progress-bar-animated" :style="{ width: motorA }">
+							A</div>
 					</div>
 					<div class="progress m-1">
-						<div class="progress-bar prograss-bar-hide" v-bind:style="{ width: motorBLeft }"></div>
-						<div class="progress-bar progress-bar-striped progress-bar-animated"
-							v-bind:style="{ width: motorB }">B</div>
+						<div class="progress-bar prograss-bar-hide" :style="{ width: motorBLeft }"></div>
+						<div class="progress-bar progress-bar-striped progress-bar-animated" :style="{ width: motorB }">
+							B</div>
 					</div>
 					<br />
 					<h2>LED</h2>
 					<p>Brightness: {{ led.brightness }}</p>
 					<ul class="list-group m-1">
-						<li class="list-group-item" v-bind:style="{ 'background-color': getLedColor(0) }">
+						<li class="list-group-item" :style="{ 'background-color': getLedColor(0) }">
 							<span class="badge badge-secondary">LED 0</span>
 						</li>
-						<li class="list-group-item" v-bind:style="{ 'background-color': getLedColor(1) }">
+						<li class="list-group-item" :style="{ 'background-color': getLedColor(1) }">
 							<span class="badge badge-secondary">LED 1</span>
 						</li>
-						<li class="list-group-item" v-bind:style="{ 'background-color': getLedColor(2) }">
+						<li class="list-group-item" :style="{ 'background-color': getLedColor(2) }">
 							<span class="badge badge-secondary">LED 2</span>
 						</li>
-						<li class="list-group-item" v-bind:style="{ 'background-color': getLedColor(3) }">
+						<li class="list-group-item" :style="{ 'background-color': getLedColor(3) }">
 							<span class="badge badge-secondary">LED 3</span>
 						</li>
 					</ul>
@@ -93,19 +104,19 @@
 						</div>
 					</div>
 					<ul class="list-group m-1">
-						<li class="list-group-item" v-bind:style="{ 'background-color': led0 }">
+						<li class="list-group-item" :style="{ 'background-color': led0 }">
 							<span class="badge badge-secondary">LED 0</span>
 							<input class="ml-5" type="color" v-model="led0">
 						</li>
-						<li class="list-group-item" v-bind:style="{ 'background-color': led1 }">
+						<li class="list-group-item" :style="{ 'background-color': led1 }">
 							<span class="badge badge-secondary">LED 1</span>
 							<input class="ml-5" type="color" v-model="led1">
 						</li>
-						<li class="list-group-item" v-bind:style="{ 'background-color': led2 }">
+						<li class="list-group-item" :style="{ 'background-color': led2 }">
 							<span class="badge badge-secondary">LED 2</span>
 							<input class="ml-5" type="color" v-model="led2">
 						</li>
-						<li class="list-group-item" v-bind:style="{ 'background-color': led3 }">
+						<li class="list-group-item" :style="{ 'background-color': led3 }">
 							<span class="badge badge-secondary">LED 3</span>
 							<input class="ml-5" type="color" v-model="led3">
 						</li>
@@ -120,9 +131,10 @@
 				<div class="col">
 					<h1>Program</h1>
 					<div class="btn-group" role="group">
+						<button type="button" class="btn btn-secondary" @click="onLoadLibrary">Load library</button>
 						<button type="button" class="btn btn-primary" @click="onCompile">Compile</button>
-						<button type="button" class="btn btn-warning" @click="onRunOnce">Run Once</button>
-						<button type="button" class="btn btn-success" @click="onRun">Run</button>
+						<button type="button" class="btn btn-warning" @click="onRunOnce">Run once</button>
+						<button type="button" class="btn btn-success" @click="onRun">Run while watching</button>
 						<button type="button" class="btn btn-danger" @click="onStop">Stop</button>
 					</div>
 					<div id="editor" style="left: 10px; bottom: 10px; position: absolute; top: 100px; right: 10px;">

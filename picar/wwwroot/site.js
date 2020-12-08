@@ -12,11 +12,11 @@ const App = {
             },
             motor: {
                 A: {
-                    direction: 0,
+                    direction: 0, // 0 for forward
                     speed: 0,
                 },
                 B: {
-                    direction: 0,
+                    direction: 0, // 0 for forward
                     speed: 0,
                 }
             },
@@ -29,7 +29,9 @@ const App = {
                     A: 0,
                     B: 0,
                 },
-            }
+            },
+            watching: true,
+            libCode: ""
         }
     },
     methods: {
@@ -54,11 +56,11 @@ const App = {
             let g = parseInt(value.substring(3, 5), 16);
             let b = parseInt(value.substring(5, 7), 16);
             this.model.led.leds[id] = [r, g, b, 0];
-            this.runOnce(`data.led.leds[${id}] = [${r},${g},${b},0]; return data;`);
+            this.runOnce(`data.led.leds[${id}] = [${r},${g},${b},0];`);
         },
         run(rawCode) {
             try {
-                let func = Function("data", rawCode);
+                let func = Function("data", this.libCode + rawCode + "\n return data;");
 
                 window.userFunc = func;
             } catch (error) {
@@ -66,19 +68,14 @@ const App = {
             }
         },
         runOnce(rawCode) {
-            async function getData() {
-                let data = await fetch('/api/').then(res => res.json());
-                return data;
-            }
-
             try {
-                let func = Function("data", rawCode);
+                let func = Function("data", this.libCode + rawCode + "\n return data;");
 
-                getData().then(data => {
+                fetch('/api/').then(res => res.json()).then(data => {
                     try {
                         let ret = func(JSON.parse(JSON.stringify(data)));
                         if (ret) {
-                            this.post(ret);
+                            this.postData(ret);
                         }
                     } catch (error) {
                         alert(error);
@@ -90,13 +87,50 @@ const App = {
         },
         onCompile(event) {
             try {
-                let code = editor.getValue();
+                let code = this.libCode + editor.getValue() + "\n return data;";
                 func = Function("data", code);
 
                 console.log("compiled")
             } catch (error) {
                 alert(error)
             }
+        },
+        getData() {
+            fetch('/api/').then(res => res.json()).then(data => {
+                this.led.brightness = data.led.brightness;
+                this.led.leds = data.led.leds;
+                this.irsensor.left = data.irsensor.left;
+                this.irsensor.right = data.irsensor.right;
+                this.irsensor.analog = data.irsensor.analog;
+                this.motor.A.direction = data.motor.A.direction;
+                this.motor.A.speed = data.motor.A.speed;
+                this.motor.B.direction = data.motor.B.direction;
+                this.motor.B.speed = data.motor.B.speed;
+
+                if (window.userFunc) {
+                    try {
+                        let ret = window.userFunc(JSON.parse(JSON.stringify(data)));
+                        if (ret) {
+                            this.postData(ret);
+                        }
+                    } catch (error) {
+                        alert(error);
+                        window.userFunc = null;
+                    }
+                }
+            });
+        },
+        postData(data) {
+            let settings = {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            };
+            fetch("/", settings).then(res => res.text()).then(text => {
+                console.log(text);
+            });
         },
         onRun(event) {
             this.run(editor.getValue());
@@ -107,35 +141,35 @@ const App = {
         onStop(event) {
             window.userFunc = null;
         },
+        onWatch(event) {
+            this.watching = !this.watching;
+        },
+        onUpdate(event) {
+            this.getData();
+        },
         onApplyLedBrightness(event) {
-            this.runOnce(`data.led.brightness = ${this.model.led.brightness}; return data;`);
+            this.runOnce(`data.led.brightness = ${this.model.led.brightness};`);
         },
         onApplyMotorA(event) {
-            if (this.model.motor.A >= 0) {
-                this.runOnce(`data.motor.A.direction = 1; data.motor.A.speed = ${this.model.motor.A}; return data;`);
+            if (this.model.motor.A <= 0) {
+                this.runOnce(`data.motor.A.direction = 1; data.motor.A.speed = ${this.model.motor.A};`);
             }
             else {
-                this.runOnce(`data.motor.A.direction = 0; data.motor.A.speed = ${-this.model.motor.A}; return data;`);
+                this.runOnce(`data.motor.A.direction = 0; data.motor.A.speed = ${-this.model.motor.A};`);
             }
         },
         onApplyMotorB(event) {
-            if (this.model.motor.B >= 0) {
-                this.runOnce(`data.motor.B.direction = 1; data.motor.B.speed = ${this.model.motor.B}; return data;`);
+            if (this.model.motor.B <= 0) {
+                this.runOnce(`data.motor.B.direction = 1; data.motor.B.speed = ${this.model.motor.B};`);
             }
             else {
-                this.runOnce(`data.motor.B.direction = 0; data.motor.B.speed = ${-this.model.motor.B}; return data;`);
+                this.runOnce(`data.motor.B.direction = 0; data.motor.B.speed = ${-this.model.motor.B};`);
             }
         },
-        post(data) {
-            let settings = {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data)
-            };
-            fetch("/", settings).then(res => res.text()).then(text => {
-                console.log(text);
+        onLoadLibrary(event) {
+            fetch("/lib.js").then(res => res.text()).then(text => {
+                this.libCode = text;
+                window.editor.setValue(this.libCode);
             });
         }
     },
@@ -157,7 +191,7 @@ const App = {
             set(newValue) { this.setModelLedColor(3, newValue); }
         },
         motorALeft() {
-            if (this.motor.A.direction === 0) {
+            if (this.motor.A.direction === 1) {
                 let rate = (100 - this.motor.A.speed) / 2;
                 return rate.toString() + "%";
             }
@@ -170,7 +204,7 @@ const App = {
             return rate.toString() + "%";
         },
         motorBLeft() {
-            if (this.motor.B.direction === 0) {
+            if (this.motor.B.direction === 1) {
                 let rate = (100 - this.motor.B.speed) / 2;
                 return rate.toString() + "%";
             }
@@ -184,36 +218,15 @@ const App = {
         },
     },
     mounted() {
-        async function getData() {
-            let data = await fetch('/api/').then(res => res.json());
-            return data;
-        }
+        fetch("/lib.js").then(res => res.text()).then(text => {
+            this.libCode = text;
+        });
 
         setInterval(() => {
-            getData().then(data => {
-                this.led.brightness = data.led.brightness;
-                this.led.leds = data.led.leds;
-                this.irsensor.left = data.irsensor.left;
-                this.irsensor.right = data.irsensor.right;
-                this.irsensor.analog = data.irsensor.analog;
-                this.motor.A.direction = data.motor.A.direction;
-                this.motor.A.speed = data.motor.A.speed;
-                this.motor.B.direction = data.motor.B.direction;
-                this.motor.B.speed = data.motor.B.speed;
-
-                if (window.userFunc) {
-                    try {
-                        let ret = window.userFunc(JSON.parse(JSON.stringify(data)));
-                        if (ret) {
-                            this.post(ret);
-                        }
-                    } catch (error) {
-                        alert(error);
-                        window.userFunc = null;
-                    }
-                }
-            });
-        }, 200)
+            if (this.watching) {
+                this.getData();
+            };
+        }, 500)
     }
 };
 var app = Vue.createApp(App);
@@ -224,4 +237,4 @@ window.userFunc = null;
 window.editor = ace.edit("editor");
 editor.setTheme("ace/theme/chrome");
 editor.session.setMode("ace/mode/javascript");
-editor.setValue("console.log(data);\nreturn data;\n");
+editor.setValue("console.log(data);\n");
