@@ -1,8 +1,9 @@
-from picar.car import Car
 from wsgiref.simple_server import make_server
 import json
 import random
 import os
+from . import irremote
+from . import car
 
 
 def _json(obj):
@@ -149,7 +150,7 @@ class WebServer:
                 irdown = controller.get("ir_down")
                 if irdown:
                     self.car.stop_controller_ir()
-                
+
                 stup = controller.get("st_up")
                 if stup:
                     self.car.start_controller_st(**stup)
@@ -164,7 +165,7 @@ class WebServer:
     def run(self):
         self.server = make_server("0.0.0.0", self.port, self._core)
         self.server.serve_forever(1)
-    
+
     def shutdown(self):
         self.server.server_close()
 
@@ -192,23 +193,92 @@ class FakeIRSensor:
         return random.randint(0, 1000), random.randint(0, 1000), random.randint(0, 1000), random.randint(0, 1000)
 
 
+class FakeIRRemote:
+    def recieve(self):
+        return random.choice(list(irremote.Key))
+
+
 class FakeMotor:
     def __init__(self):
         self.speed = random.randint(0, 99)
         self.direction = random.randint(0, 1)
 
 
-class FakeCar(Car):
+class FakeCar:
     def __init__(self):
         self.led = FakeLeds()
         self.irsensor = FakeIRSensor()
         self.motorA = FakeMotor()
         self.motorB = FakeMotor()
+        self.irremote = FakeIRRemote()
+        self.motors = (self.motorA, self.motorB)
         self.controller_ir = None
         self.controller_st = None
 
+    def start_controller_ir(self, speed=10):
+        if self.controller_ir is not None:
+            return
+        self.controller_ir = car.CarController(
+            self, car.infraredRemoteController, speed=speed)
+        self.controller_ir.run()
 
-if __name__ == "__main__":
+    def stop_controller_ir(self):
+        if self.controller_ir is None:
+            return
+        self.controller_ir.shutdown()
+        self.controller_ir = None
+
+    def start_controller_st(self, start=None, diff=100, speed=10, interval=0.1):
+        if self.controller_st is not None:
+            return
+        self.controller_st = car.CarController(
+            self, car.selfTraceController, start=start, diff=diff, speed=speed, interval=interval)
+        self.controller_st.run()
+
+    def stop_controller_st(self):
+        if self.controller_st is None:
+            return
+        self.controller_st.shutdown()
+        self.controller_st = None
+
+    def line(self, speed=10, direction=None):
+        speed = min(99, max(0, speed))
+        for motor in self.motors:
+            if direction is not None:
+                motor.direction = direction
+            motor.speed = speed
+
+    def stop(self):
+        self.line(speed=0)
+
+    def fore(self, speed=10):
+        self.line(direction=0, speed=speed)
+
+    def back(self, speed=10):
+        self.line(direction=1, speed=speed)
+
+    def left(self, speed=10):
+        self.line(0, 0)
+        self.motorA.direction = 1
+        self.line(speed=speed)
+
+    def right(self, speed=10):
+        self.line(0, 0)
+        self.motorB.direction = 1
+        self.line(speed=speed)
+
+
+def demo():
     c = FakeCar()
     s = WebServer(c)
-    s.run()
+
+    try:
+        s.run()
+    except KeyboardInterrupt:
+        c.stop_controller_ir()
+        c.stop_controller_st()
+        s.shutdown()
+
+
+if __name__ == "__main__":
+    demo()

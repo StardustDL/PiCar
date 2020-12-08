@@ -39,17 +39,17 @@ function color(id, value) {
 }
 
 function irup(speed = 10) {
-    data.ir_up = {
+    data.controller.ir_up = {
         speed: speed
     }
 }
 
 function irdown() {
-    data.ir_down = {}
+    data.controller.ir_down = [true];
 }
 
 function stup(start = null, diff = 100, speed = 10, interval = 0.1) {
-    data.st_up = {
+    data.controller.st_up = {
         diff: diff,
         speed: speed,
         interval: interval
@@ -61,5 +61,5 @@ function stup(start = null, diff = 100, speed = 10, interval = 0.1) {
 }
 
 function stdown() {
-    data.st_down = {}
+    data.controller.st_down = [true];
 }

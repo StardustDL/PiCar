@@ -1,6 +1,7 @@
 from . import car
 from . import server
 
+import sys
 import threading
 
 
@@ -8,7 +9,7 @@ def runWebServer(web):
     web.run()
 
 
-if __name__ == "__main__":
+def product():
     c = car.Car()
     s = server.WebServer(c)
 
@@ -23,3 +24,10 @@ if __name__ == "__main__":
         c.stop_controller_st()
         s.shutdown()
         tweb.join()
+
+
+if __name__ == "__main__":
+    if "--demo" in sys.argv:
+        server.demo()
+    else:
+        product()

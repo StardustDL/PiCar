@@ -20,6 +20,10 @@ const App = {
                     speed: 0,
                 }
             },
+            controller: {
+                ir: false,
+                st: false
+            },
             model: {
                 led: {
                     brightness: 128,
@@ -106,6 +110,8 @@ const App = {
                 this.motor.A.speed = data.motor.A.speed;
                 this.motor.B.direction = data.motor.B.direction;
                 this.motor.B.speed = data.motor.B.speed;
+                this.controller.ir = data.controller.ir;
+                this.controller.st = data.controller.st;
 
                 if (window.userFunc) {
                     try {
@@ -146,6 +152,22 @@ const App = {
         },
         onUpdate(event) {
             this.getData();
+        },
+        onToggleIR(event) {
+            if (this.controller.ir) {
+                this.runOnce(`irdown();`);
+            }
+            else {
+                this.runOnce(`irup();`);
+            }
+        },
+        onToggleST(event) {
+            if (this.controller.st) {
+                this.runOnce(`stdown();`);
+            }
+            else {
+                this.runOnce(`stup();`);
+            }
         },
         onApplyLedBrightness(event) {
             this.runOnce(`data.led.brightness = ${this.model.led.brightness};`);

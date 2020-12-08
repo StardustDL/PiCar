@@ -1,18 +1,10 @@
-from . import init
-from . import joystick
-from . import servo
-from . import led
-from . import irremote
-from . import irsensor
-from . import motor
-from . import distance
 from .irremote import Key
 import threading
 import time
 
 
 class CarController:
-    def __init__(self, car: "Car", handler, **kwargs):
+    def __init__(self, car, handler, **kwargs):
         self.car = car
         self.handler = handler
         self.closed = False
@@ -54,6 +46,7 @@ def infraredRemoteController(cc: CarController, speed=10):
         elif key is Key.EQ:
             speed = origin
             cc.car.line(speed=speed)
+        time.sleep(0.1)
 
 
 def selfTraceController(cc: CarController, start=None, diff=100, speed=10, interval=0.1):
@@ -76,6 +69,15 @@ def selfTraceController(cc: CarController, start=None, diff=100, speed=10, inter
 
 class Car:
     def __init__(self):
+        from . import init
+        from . import joystick
+        from . import servo
+        from . import led
+        from . import irremote
+        from . import irsensor
+        from . import motor
+        from . import distance
+
         init.init()
         self.joystick = joystick.Joystick()
         self.led = led.LedManager()
@@ -92,28 +94,28 @@ class Car:
     def start_controller_ir(self, speed=10):
         if self.controller_ir is not None:
             return
-        self.controler_ir = CarController(
+        self.controller_ir = CarController(
             self, infraredRemoteController, speed=speed)
-        self.controler_ir.run()
+        self.controller_ir.run()
 
     def stop_controller_ir(self):
         if self.controller_ir is None:
             return
-        self.controler_ir.shutdown()
-        self.controler_ir = None
+        self.controller_ir.shutdown()
+        self.controller_ir = None
 
     def start_controller_st(self, start=None, diff=100, speed=10, interval=0.1):
         if self.controller_st is not None:
             return
-        self.controler_st = CarController(
+        self.controller_st = CarController(
             self, selfTraceController, start=start, diff=diff, speed=speed, interval=interval)
-        self.controler_st.run()
+        self.controller_st.run()
 
     def stop_controller_st(self):
         if self.controller_st is None:
             return
-        self.controler_st.shutdown()
-        self.controler_st = None
+        self.controller_st.shutdown()
+        self.controller_st = None
 
     def line(self, speed=10, direction=None):
         speed = min(99, max(0, speed))
