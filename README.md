@@ -2,6 +2,8 @@
 
 An embedded application for toy-car controlling based on Raspberry Pi 3 Model B and AlphaBot2-Pi.
 
+![](https://repository-images.githubusercontent.com/311939116/ae20aa80-3a16-11eb-921e-5ea0231f505d)
+
 > This is the source codes of my programming assignment of the course Embedded Applications on Intelligent Systems (2020 Fall) at NJU.
 
 ## Features
