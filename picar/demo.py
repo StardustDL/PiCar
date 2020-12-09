@@ -24,7 +24,7 @@ class FakeIRSensor:
         return random.randint(0, 1)
 
     def analog(self):
-        return random.randint(0, 1000), random.randint(0, 1000), random.randint(0, 1000), random.randint(0, 1000)
+        return random.randint(0, 1000), random.randint(0, 1000), random.randint(0, 1000), random.randint(0, 1000), random.randint(0, 1000)
 
 
 class FakeIRRemote:

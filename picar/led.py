@@ -18,7 +18,7 @@ class Led:
         self.close()
 
     def close(self):
-        self.color = (0, 0, 0, 0)
+        self.color = (0, 0, 0, 255)
 
     @property
     def color(self):
@@ -27,7 +27,7 @@ class Led:
     @color.setter
     def color(self, value):
         if len(value) == 3:
-            value = (*value, 0)
+            value = (*value, 255)
         self._color = value
         self.manager.apply(self.index, *self._color)
 
@@ -46,7 +46,7 @@ class LedManager:
         self.brightness = 128
         self.leds = tuple([Led(self, i) for i in range(4)])
 
-    def apply(self, index, red, green, blue, white=0):
+    def apply(self, index, red, green, blue, white=255):
         if 0 <= index < 4:
             self.strip.setPixelColorRGB(index, red, green, blue, white)
             self.strip.show()

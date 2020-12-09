@@ -49,7 +49,7 @@ function color(id, value) {
     let r = parseInt(value.substring(1, 3), 16);
     let g = parseInt(value.substring(3, 5), 16);
     let b = parseInt(value.substring(5, 7), 16);
-    data.led.leds[id] = [r, g, b, 0];
+    data.led.leds[id] = [r, g, b, 255];
 }
 
 function randcolor(id = null) {
@@ -62,7 +62,7 @@ function randcolor(id = null) {
         let r = randint(0, 256);
         let g = randint(0, 256);
         let b = randint(0, 256);
-        data.led.leds[id] = [r, g, b, 0];
+        data.led.leds[id] = [r, g, b, 255];
     }
 }
 
@@ -76,7 +76,7 @@ function irdown() {
     data.controller.ir_down = [true];
 }
 
-function stup(start = null, diff = 100, speed = 10, interval = 0.1) {
+function stup(start = null, diff = 500, speed = 10, interval = 0.1) {
     data.controller.st_up = {
         diff: diff,
         speed: speed,
