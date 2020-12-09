@@ -30,8 +30,8 @@ class IRSensor:
             time.sleep(0.0001)
         return value[1:]
 
-    def left(self):
+    def left(self): # 0 for detected
         return GPIO.input(_DIG_LEFT)
 
-    def right(self):
+    def right(self): # 0 for detected
         return GPIO.input(_DIG_RIGHT)

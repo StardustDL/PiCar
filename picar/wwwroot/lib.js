@@ -18,14 +18,14 @@ function right() {
 }
 
 function fore() {
-    line(0); 
+    line(0);
 }
 
 function back() {
     line(1);
 }
 
-function speed(speed=10) {
+function speed(speed = 10) {
     data.motor.A.speed = speed;
     data.motor.B.speed = speed;
 }
@@ -34,12 +34,12 @@ function stop() {
     speed(0);
 }
 
-function speedup(speed=10) {
+function speedup(speed = 10) {
     data.motor.A.speed += speed;
     data.motor.B.speed += speed;
 }
 
-function speeddown(speed=10) {
+function speeddown(speed = 10) {
     data.motor.A.speed -= speed;
     data.motor.B.speed -= speed;
 }
@@ -65,6 +65,25 @@ function randcolor(id = null) {
     }
 }
 
+function randclosecolor(id = null, delta = 10) {
+    if (id == null) {
+        for (let i = 0; i < 4; i++) {
+            randclosecolor(i);
+        }
+    }
+    else {
+        let fr = randint(0, 2);
+        let fg = randint(0, 2);
+        let fb = randint(0, 2);
+        if (fr == 0) {
+            let r = Math.max(0, Math.min(255, data.led.leds[id][0] + (fr == 0 ? -1 : 1) * delta));
+            let g = Math.max(0, Math.min(255, data.led.leds[id][1] + (fg == 0 ? -1 : 1) * delta));
+            let b = Math.max(0, Math.min(255, data.led.leds[id][2] + (fb == 0 ? -1 : 1) * delta));
+            data.led.leds[id] = [r, g, b, 255];
+        }
+    }
+}
+
 function irup(speed = 10) {
     data.controller.ir_up = {
         speed: speed
@@ -75,7 +94,7 @@ function irdown() {
     data.controller.ir_down = [true];
 }
 
-function stup(start = null, diff = 500, speed = 10, interval = 0.1) {
+function stup(start = null, diff = 500, speed = 10, interval = 0.3) {
     data.controller.st_up = {
         diff: diff,
         speed: speed,

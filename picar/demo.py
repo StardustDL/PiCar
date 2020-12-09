@@ -62,7 +62,7 @@ class FakeCar:
         self.controller_ir.shutdown()
         self.controller_ir = None
 
-    def start_controller_st(self, start=None, diff=100, speed=10, interval=0.1):
+    def start_controller_st(self, start=None, diff=100, speed=10, interval=0.3):
         if self.controller_st is not None:
             return
         self.controller_st = car.CarController(

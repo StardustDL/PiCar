@@ -1,6 +1,7 @@
 from .irremote import Key
 import threading
 import time
+import random
 
 
 class CarController:
@@ -49,21 +50,33 @@ def infraredRemoteController(cc: CarController, speed=10):
         time.sleep(0.1)
 
 
-def selfTraceController(cc: CarController, start=None, diff=500, speed=10, interval=0.1):
+def selfTraceController(cc: CarController, start=None, diff=500, speed=10, interval=0.3):
     if start is None or len(start) != 5:
         start = cc.car.irsensor.analog()
     while not cc.closed:
-        current = cc.car.irsensor.analog()
+        l = cc.car.irsensor.left()
+        r = cc.car.irsensor.right()
 
-        dis = 0
-        for i in range(5):
-            dis += abs(start[i] - current[i])
-
-        if dis > diff:
+        if l == 0 and r != 0:
+            cc.car.right(speed)
+        elif l != 0 and r == 0:
             cc.car.left(speed)
-            time.sleep(interval)
+        elif l != 0 and r != 0:
+            cc.car.back(speed)
         else:
-            cc.car.line(speed, 0)
+            current = cc.car.irsensor.analog()
+
+            dis = 0
+            for i in range(5):
+                dis += abs(start[i] - current[i])
+
+            if dis > diff:
+                if random.randint(0, 1) == 0:
+                    cc.car.left(speed)
+                else:
+                    cc.car.right(speed)
+            else:
+                cc.car.line(speed, 0)
 
         time.sleep(interval)
 
@@ -105,7 +118,7 @@ class Car:
         self.controller_ir.shutdown()
         self.controller_ir = None
 
-    def start_controller_st(self, start=None, diff=500, speed=10, interval=0.1):
+    def start_controller_st(self, start=None, diff=500, speed=10, interval=0.3):
         if self.controller_st is not None:
             return
         self.controller_st = CarController(
