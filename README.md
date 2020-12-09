@@ -24,7 +24,7 @@ An embedded application for toy-car controlling based on Raspberry Pi 3 Model B 
 python3 -m picar
 ```
 
-There is a demo which uses a fake car implement. It is fully Python codes, so it doesn't need any IOT devices. Use the following commands to run it.
+There is a demo which uses a fake car implement. It is fully Python codes, so it doesn't need any embedded devices. Use the following commands to run it.
 
 ```sh
 python3 -m picar --demo
@@ -41,6 +41,6 @@ The API of the website is at `http://localhost:19090/api/`.
 - [Adafruit Python PureIO](https://github.com/yfang1644/Adafruit_Python_PureIO) for controlling servos on AlphaBot2.
   - [Adafruit Python GPIO](https://github.com/yfang1644/Adafruit_Python_GPIO)
   - [Adafruit Python PCA9685](https://github.com/yfang1644/Adafruit_Python_PCA9685)
+- [wsgiref](https://docs.python.org/3/library/wsgiref.html) for web server.
 - [Vue 3](https://github.com/vuejs/vue-next) for web client.
-- [Python 3](https://www.python.org/) for IOT and web server.
 - [Ace](https://ace.c9.io/) for code editor in client.
