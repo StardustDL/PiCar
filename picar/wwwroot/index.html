@@ -67,13 +67,13 @@
 						<div class="progress-bar prograss-bar-hide" :style="{ width: motorALeft }"></div>
 						<div class="progress-bar progress-bar-striped progress-bar-animated" :style="{ width: motorA }"
 							:class="{ 'bg-success': !motor.A.direction, 'bg-danger': motor.A.direction }">
-							A</div>
+							A: {{ motor.A.speed }}</div>
 					</div>
 					<div class="progress m-1">
 						<div class="progress-bar prograss-bar-hide" :style="{ width: motorBLeft }"></div>
 						<div class="progress-bar progress-bar-striped progress-bar-animated" :style="{ width: motorB }"
 							:class="{ 'bg-success': !motor.B.direction, 'bg-danger': motor.B.direction }">
-							B</div>
+							B: {{ motor.B.speed }}</div>
 					</div>
 					<br />
 					<h2>
@@ -86,16 +86,16 @@
 					</p>
 					<ul class="list-group m-1">
 						<li class="list-group-item" :style="{ 'background-color': getLedColor(0) }">
-							<span class="badge badge-secondary">LED 0</span>
+							<span class="badge badge-secondary">LED 0: {{ getLedColor(0) }}</span>
 						</li>
 						<li class="list-group-item" :style="{ 'background-color': getLedColor(1) }">
-							<span class="badge badge-secondary">LED 1</span>
+							<span class="badge badge-secondary">LED 1: {{ getLedColor(1) }}</span>
 						</li>
 						<li class="list-group-item" :style="{ 'background-color': getLedColor(2) }">
-							<span class="badge badge-secondary">LED 2</span>
+							<span class="badge badge-secondary">LED 2: {{ getLedColor(2) }}</span>
 						</li>
 						<li class="list-group-item" :style="{ 'background-color': getLedColor(3) }">
-							<span class="badge badge-secondary">LED 3</span>
+							<span class="badge badge-secondary">LED 3: {{ getLedColor(3) }}</span>
 						</li>
 					</ul>
 					<br />
@@ -151,7 +151,7 @@
 						<div class="input-group-prepend">
 							<span class="input-group-text">A</span>
 						</div>
-						<input type="number" class="form-control" v-model="model.motor.A" min="-99" max="99">
+						<input type="number" class="form-control" v-model="model.motor.A" min="-99" max="99" placeholder="-99~99">
 						<div class="input-group-append">
 							<button class="btn" type="button" @click="onApplyMotorA">
 								<span class="mdi mdi-check"></span>
@@ -162,7 +162,7 @@
 						<div class="input-group-prepend">
 							<span class="input-group-text">B</span>
 						</div>
-						<input type="number" class="form-control" v-model="model.motor.B" min="-99" max="99">
+						<input type="number" class="form-control" v-model="model.motor.B" min="-99" max="99" placeholder="-99~99">
 						<div class="input-group-append">
 							<button class="btn" type="button" @click="onApplyMotorB">
 								<span class="mdi mdi-check"></span>
@@ -182,7 +182,7 @@
 						<div class="input-group-prepend">
 							<span class="input-group-text"><span class="mdi mdi-brightness-6"></span></span>
 						</div>
-						<input type="number" class="form-control" v-model="model.led.brightness" min="0" max="255">
+						<input type="number" class="form-control" v-model="model.led.brightness" min="0" max="255" placeholder="0~255">
 						<div class="input-group-append">
 							<button class="btn" type="button" @click="onApplyLedBrightness">
 								<span class="mdi mdi-check"></span>
@@ -191,7 +191,7 @@
 					</div>
 					<ul class="list-group m-1">
 						<li class="list-group-item" :style="{ 'background-color': led0 }">
-							<span class="badge badge-secondary">LED 0</span>
+							<span class="badge badge-secondary">LED 0: {{ led0 }}</span>
 							<input class="ml-5" type="color" v-model="led0">
 							<button class="btn ml-5 btn-outline-dark btn-sm" @click="onRandomLED0">
 								<span class="mdi mdi-refresh"></span>
@@ -199,7 +199,7 @@
 							</button>
 						</li>
 						<li class="list-group-item" :style="{ 'background-color': led1 }">
-							<span class="badge badge-secondary">LED 1</span>
+							<span class="badge badge-secondary">LED 1: {{ led1 }}</span>
 							<input class="ml-5" type="color" v-model="led1">
 							<button class="btn ml-5 btn-outline-dark btn-sm" @click="onRandomLED1">
 								<span class="mdi mdi-refresh"></span>
@@ -207,7 +207,7 @@
 							</button>
 						</li>
 						<li class="list-group-item" :style="{ 'background-color': led2 }">
-							<span class="badge badge-secondary">LED 2</span>
+							<span class="badge badge-secondary">LED 2: {{ led2 }}</span>
 							<input class="ml-5" type="color" v-model="led2">
 							<button class="btn ml-5 btn-outline-dark btn-sm" @click="onRandomLED2">
 								<span class="mdi mdi-refresh"></span>
@@ -215,7 +215,7 @@
 							</button>
 						</li>
 						<li class="list-group-item" :style="{ 'background-color': led3 }">
-							<span class="badge badge-secondary">LED 3</span>
+							<span class="badge badge-secondary">LED 3: {{ led3 }}</span>
 							<input class="ml-5" type="color" v-model="led3">
 							<button class="btn ml-5 btn-outline-dark btn-sm" @click="onRandomLED3">
 								<span class="mdi mdi-refresh"></span>

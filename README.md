@@ -2,7 +2,7 @@
 
 An embedded application for toy-car controlling based on Raspberry Pi 3 Model B and AlphaBot2-Pi.
 
-![](https://repository-images.githubusercontent.com/311939116/ae20aa80-3a16-11eb-921e-5ea0231f505d)
+![](https://repository-images.githubusercontent.com/311939116/555d0c00-3a2e-11eb-90a0-69240df2bb42)
 
 > This is the source codes of my programming assignment of the course Embedded Applications on Intelligent Systems (2020 Fall) at NJU.
 
@@ -21,13 +21,13 @@ An embedded application for toy-car controlling based on Raspberry Pi 3 Model B 
 ## Usage
 
 ```sh
-python3 -m picar
+python -m picar
 ```
 
 There is a demo which uses a fake car implement. It is fully Python codes, so it doesn't need any embedded devices. Use the following commands to run it.
 
 ```sh
-python3 -m picar --demo
+python -m picar --demo
 ```
 
 Visit `http://localhost:19090` to control the toy car from browser.

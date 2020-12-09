@@ -210,18 +210,18 @@ const App = {
         },
         onApplyMotorA(event) {
             if (this.model.motor.A <= 0) {
-                this.runOnce(`data.motor.A.direction = 1; data.motor.A.speed = ${this.model.motor.A};`);
+                this.runOnce(`data.motor.A.direction = 1; data.motor.A.speed = ${-this.model.motor.A};`);
             }
             else {
-                this.runOnce(`data.motor.A.direction = 0; data.motor.A.speed = ${-this.model.motor.A};`);
+                this.runOnce(`data.motor.A.direction = 0; data.motor.A.speed = ${this.model.motor.A};`);
             }
         },
         onApplyMotorB(event) {
             if (this.model.motor.B <= 0) {
-                this.runOnce(`data.motor.B.direction = 1; data.motor.B.speed = ${this.model.motor.B};`);
+                this.runOnce(`data.motor.B.direction = 1; data.motor.B.speed = ${-this.model.motor.B};`);
             }
             else {
-                this.runOnce(`data.motor.B.direction = 0; data.motor.B.speed = ${-this.model.motor.B};`);
+                this.runOnce(`data.motor.B.direction = 0; data.motor.B.speed = ${this.model.motor.B};`);
             }
         },
         onLoadLibrary(event) {
