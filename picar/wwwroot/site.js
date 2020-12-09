@@ -169,6 +169,42 @@ const App = {
                 this.runOnce(`stup();`);
             }
         },
+        onRandomLED(event) {
+            this.runOnce("randcolor();");
+        },
+        onRandomLED0(event) {
+            this.runOnce("randcolor(0);");
+        },
+        onRandomLED1(event) {
+            this.runOnce("randcolor(1);");
+        },
+        onRandomLED2(event) {
+            this.runOnce("randcolor(2);");
+        },
+        onRandomLED3(event) {
+            this.runOnce("randcolor(3);");
+        },
+        onMotorLeft(event) {
+            this.runOnce("left();");
+        },
+        onMotorRight(event) {
+            this.runOnce("right();");
+        },
+        onMotorFore(event) {
+            this.runOnce("fore();");
+        },
+        onMotorBack(event) {
+            this.runOnce("back();");
+        },
+        onMotorStop(event) {
+            this.runOnce("stop();");
+        },
+        onMotorSpeedUp(event) {
+            this.runOnce("speedup();");
+        },
+        onMotorSpeedDown(event) {
+            this.runOnce("speeddown();");
+        },
         onApplyLedBrightness(event) {
             this.runOnce(`data.led.brightness = ${this.model.led.brightness};`);
         },

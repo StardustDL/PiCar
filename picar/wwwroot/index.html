@@ -7,12 +7,13 @@
 
 	<title>PiCar</title>
 	<link rel="stylesheet" href="/framework/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="/framework/mdi/css/materialdesignicons.min.css">
 	<link rel="stylesheet" href="/site.css">
 </head>
 
 <body>
 	<div id="app">
-		<nav class="navbar navbar-expand-lg navbar-light bg-light">
+		<nav class="navbar navbar-expand-lg navbar-light bg-light mb-2">
 			<h1 class="navbar-brand" href="#">PiCar</h1>
 			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
 				aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -24,37 +25,65 @@
 
 				</ul>
 				<div class="btn-group mr-2" role="group">
-					<button class="btn" :class="{ 'btn-danger': controller.st, 'btn-success': !controller.st}"
-						@click="onToggleST">{{ controller.st ? "Disable self-tracing control" : "Enable self-tracing control" }}</button>
-					<button class="btn" :class="{ 'btn-danger': controller.ir, 'btn-success': !controller.ir}"
-						@click="onToggleIR">{{ controller.ir ? "Disable infrared remote control" : "Enable infrared remote control" }}</button>
+					<button class="btn"
+						:class="{ 'btn-outline-danger': controller.st, 'btn-outline-success': !controller.st}"
+						@click="onToggleST">
+						<span class="mdi" :class="{ 'mdi-car-off': controller.st, 'mdi-car': !controller.st}"></span>
+						{{ controller.st ? "Disable self-tracing" : "Enable self-tracing" }}
+					</button>
+					<button class="btn"
+						:class="{ 'btn-outline-danger': controller.ir, 'btn-outline-success': !controller.ir}"
+						@click="onToggleIR">
+						<span class="mdi"
+							:class="{ 'mdi-remote-off': controller.ir, 'mdi-remote': !controller.ir}"></span>
+						{{ controller.ir ? "Disable infrared remote" : "Enable infrared remote" }}
+					</button>
 				</div>
 				<div class="btn-group" role="group">
-					<button class="btn btn-primary" @click="onUpdate">Update</button>
-					<button class="btn" :class="{ 'btn-danger': watching, 'btn-success': !watching}"
-						@click="onWatch">{{ watching ? "Unwatch" : "Watch" }}</button>
+					<button class="btn btn-primary" @click="onUpdate">
+						<span class="mdi mdi-refresh"></span>
+						Update
+					</button>
+					<button class="btn" :class="{ 'btn-danger': watching, 'btn-success': !watching}" @click="onWatch">
+						<span class="mdi" :class="{ 'mdi-eye-off': watching, 'mdi-eye': !watching}"></span>
+						{{ watching ? "Unwatch" : "Watch" }}
+					</button>
 				</div>
 			</div>
 		</nav>
 		<div class="container-fluid">
 			<div class="row">
 				<div class="col-3">
-					<h1>State</h1>
+					<h1>
+						<span class="mdi mdi-monitor"></span>
+						State
+					</h1>
 					<br />
-					<h2>Motor</h2>
+					<h2>
+						<span class="mdi mdi-motorbike"></span>
+						Motor
+					</h2>
 					<div class="progress m-1">
 						<div class="progress-bar prograss-bar-hide" :style="{ width: motorALeft }"></div>
-						<div class="progress-bar progress-bar-striped progress-bar-animated" :style="{ width: motorA }">
+						<div class="progress-bar progress-bar-striped progress-bar-animated" :style="{ width: motorA }"
+							:class="{ 'bg-success': !motor.A.direction, 'bg-danger': motor.A.direction }">
 							A</div>
 					</div>
 					<div class="progress m-1">
 						<div class="progress-bar prograss-bar-hide" :style="{ width: motorBLeft }"></div>
-						<div class="progress-bar progress-bar-striped progress-bar-animated" :style="{ width: motorB }">
+						<div class="progress-bar progress-bar-striped progress-bar-animated" :style="{ width: motorB }"
+							:class="{ 'bg-success': !motor.B.direction, 'bg-danger': motor.B.direction }">
 							B</div>
 					</div>
 					<br />
-					<h2>LED</h2>
-					<p>Brightness: {{ led.brightness }}</p>
+					<h2>
+						<span class="mdi mdi-led-on"></span>
+						LED
+					</h2>
+					<p>
+						<span class="mdi mdi-brightness-6"></span>
+						Brightness: {{ led.brightness }}
+					</p>
 					<ul class="list-group m-1">
 						<li class="list-group-item" :style="{ 'background-color': getLedColor(0) }">
 							<span class="badge badge-secondary">LED 0</span>
@@ -70,23 +99,63 @@
 						</li>
 					</ul>
 					<br />
-					<h2>IR Sensor</h2>
-					<p>Left: {{ irsensor.left }}</p>
-					<p>Right: {{ irsensor.right }}</p>
+					<h2>
+						<span class="mdi mdi-signal-variant"></span>
+						IR Sensor
+					</h2>
+					<p>
+						<span class="mdi mdi-arrow-left"></span>
+						Left: {{ irsensor.left }}
+					</p>
+					<p>
+						<span class="mdi mdi-arrow-right"></span>
+						Right: {{ irsensor.right }}
+					</p>
 					<p>Analog: {{ irsensor.analog }}</p>
 					<br />
 				</div>
 				<div class="col-3">
-					<h1>Operation</h1>
+					<h1>
+						<span class="mdi mdi-cog"></span>
+						Operation
+					</h1>
 					<br />
-					<h2>Motor</h2>
+					<h2>
+						<span class="mdi mdi-motorbike"></span>
+						Motor
+						<div class="btn-group ml-2" role="group">
+							<button class="btn" @click="onMotorStop">
+								<span class="mdi mdi-gamepad-circle-outline"></span>
+							</button>
+							<button class="btn" @click="onMotorFore">
+								<span class="mdi mdi-gamepad-circle-up"></span>
+							</button>
+							<button class="btn" @click="onMotorBack">
+								<span class="mdi mdi-gamepad-circle-down"></span>
+							</button>
+							<button class="btn" @click="onMotorLeft">
+								<span class="mdi mdi-gamepad-circle-left"></span>
+							</button>
+							<button class="btn" @click="onMotorRight">
+								<span class="mdi mdi-gamepad-circle-right"></span>
+							</button>
+							<button class="btn" @click="onMotorSpeedUp">
+								<span class="mdi mdi-plus"></span>
+							</button>
+							<button class="btn" @click="onMotorSpeedDown">
+								<span class="mdi mdi-minus"></span>
+							</button>
+						</div>
+					</h2>
 					<div class="input-group m-1">
 						<div class="input-group-prepend">
 							<span class="input-group-text">A</span>
 						</div>
 						<input type="number" class="form-control" v-model="model.motor.A" min="-99" max="99">
 						<div class="input-group-append">
-							<button class="btn" type="button" @click="onApplyMotorA">Apply</button>
+							<button class="btn" type="button" @click="onApplyMotorA">
+								<span class="mdi mdi-check"></span>
+							</button>
 						</div>
 					</div>
 					<div class="input-group m-1">
@@ -95,53 +164,101 @@
 						</div>
 						<input type="number" class="form-control" v-model="model.motor.B" min="-99" max="99">
 						<div class="input-group-append">
-							<button class="btn" type="button" @click="onApplyMotorB">Apply</button>
+							<button class="btn" type="button" @click="onApplyMotorB">
+								<span class="mdi mdi-check"></span>
+							</button>
 						</div>
 					</div>
 					<br />
-					<h2>LED</h2>
+					<h2>
+						<span class="mdi mdi-led-on"></span>
+						LED
+						<button class="btn btn-outline-dark ml-5" @click="onRandomLED">
+							<span class="mdi mdi-refresh"></span>
+							Random
+						</button>
+					</h2>
 					<div class="input-group m-1">
 						<div class="input-group-prepend">
-							<span class="input-group-text">Brightness</span>
+							<span class="input-group-text"><span class="mdi mdi-brightness-6"></span></span>
 						</div>
 						<input type="number" class="form-control" v-model="model.led.brightness" min="0" max="255">
 						<div class="input-group-append">
-							<button class="btn" type="button" @click="onApplyLedBrightness">Apply</button>
+							<button class="btn" type="button" @click="onApplyLedBrightness">
+								<span class="mdi mdi-check"></span>
+							</button>
 						</div>
 					</div>
 					<ul class="list-group m-1">
 						<li class="list-group-item" :style="{ 'background-color': led0 }">
 							<span class="badge badge-secondary">LED 0</span>
 							<input class="ml-5" type="color" v-model="led0">
+							<button class="btn ml-5 btn-outline-dark btn-sm" @click="onRandomLED0">
+								<span class="mdi mdi-refresh"></span>
+								Random
+							</button>
 						</li>
 						<li class="list-group-item" :style="{ 'background-color': led1 }">
 							<span class="badge badge-secondary">LED 1</span>
 							<input class="ml-5" type="color" v-model="led1">
+							<button class="btn ml-5 btn-outline-dark btn-sm" @click="onRandomLED1">
+								<span class="mdi mdi-refresh"></span>
+								Random
+							</button>
 						</li>
 						<li class="list-group-item" :style="{ 'background-color': led2 }">
 							<span class="badge badge-secondary">LED 2</span>
 							<input class="ml-5" type="color" v-model="led2">
+							<button class="btn ml-5 btn-outline-dark btn-sm" @click="onRandomLED2">
+								<span class="mdi mdi-refresh"></span>
+								Random
+							</button>
 						</li>
 						<li class="list-group-item" :style="{ 'background-color': led3 }">
 							<span class="badge badge-secondary">LED 3</span>
 							<input class="ml-5" type="color" v-model="led3">
+							<button class="btn ml-5 btn-outline-dark btn-sm" @click="onRandomLED3">
+								<span class="mdi mdi-refresh"></span>
+								Random
+							</button>
 						</li>
 					</ul>
 					<br />
-					<h2>Camera</h2>
+					<h2>
+						<span class="mdi mdi-camera"></span>
+						Camera
+					</h2>
 					<iframe src="http://192.168.208.108:8081" frameborder="0" border="0" marginwidth="0"
 						marginheight="0">
 						Camera
 					</iframe>
 				</div>
 				<div class="col">
-					<h1>Program</h1>
+					<h1>
+						<span class="mdi mdi-code-braces"></span>
+						Program
+					</h1>
 					<div class="btn-group" role="group">
-						<button type="button" class="btn btn-outline-secondary" @click="onLoadLibrary">Load library</button>
-						<button type="button" class="btn btn-outline-primary" @click="onCompile">Compile</button>
-						<button type="button" class="btn btn-outline-warning" @click="onRunOnce">Run once</button>
-						<button type="button" class="btn btn-outline-success" @click="onRun">Run while watching</button>
-						<button type="button" class="btn btn-outline-danger" @click="onStop">Stop</button>
+						<button type="button" class="btn btn-outline-secondary" @click="onLoadLibrary">
+							<span class="mdi mdi-bookshelf"></span>
+							Load library
+						</button>
+						<button type="button" class="btn btn-outline-primary" @click="onCompile">
+							<span class="mdi mdi-test-tube"></span>
+							Compile
+						</button>
+						<button type="button" class="btn btn-outline-warning" @click="onRunOnce">
+							<span class="mdi mdi-upload"></span>
+							Run once
+						</button>
+						<button type="button" class="btn btn-outline-success" @click="onRun">
+							<span class="mdi mdi-upload-multiple"></span>
+							Run while watching
+						</button>
+						<button type="button" class="btn btn-outline-danger" @click="onStop">
+							<span class="mdi mdi-stop-circle-outline"></span>
+							Stop
+						</button>
 					</div>
 					<div id="editor" style="left: 10px; bottom: 10px; position: absolute; top: 100px; right: 10px;">
 					</div>
@@ -150,7 +267,9 @@
 		</div>
 		<footer class="border-top footer text-muted">
 			<div class="container-fluid">
-				Copyright 2020 - PiCar - StardustDL - <a href="https://github.com/StardustDL/PiCar">GitHub</a>
+				Copyright <span class="mdi mdi-copyright"></span> 2020 - <span class="mdi mdi-raspberry-pi"></span>
+				PiCar - StardustDL - <a href="https://github.com/StardustDL/PiCar"><span class="mdi mdi-github"></span>
+					GitHub</a>
 			</div>
 		</footer>
 	</div>

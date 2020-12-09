@@ -28,6 +28,7 @@ def product():
 
 if __name__ == "__main__":
     if "--demo" in sys.argv:
-        server.demo()
+        from . import demo
+        demo.demo()
     else:
         product()
