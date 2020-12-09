@@ -75,12 +75,10 @@ function randclosecolor(id = null, delta = 10) {
         let fr = randint(0, 2);
         let fg = randint(0, 2);
         let fb = randint(0, 2);
-        if (fr == 0) {
-            let r = Math.max(0, Math.min(255, data.led.leds[id][0] + (fr == 0 ? -1 : 1) * delta));
-            let g = Math.max(0, Math.min(255, data.led.leds[id][1] + (fg == 0 ? -1 : 1) * delta));
-            let b = Math.max(0, Math.min(255, data.led.leds[id][2] + (fb == 0 ? -1 : 1) * delta));
-            data.led.leds[id] = [r, g, b, 255];
-        }
+        let r = Math.max(0, Math.min(255, data.led.leds[id][0] + (fr == 0 ? -1 : 1) * delta));
+        let g = Math.max(0, Math.min(255, data.led.leds[id][1] + (fg == 0 ? -1 : 1) * delta));
+        let b = Math.max(0, Math.min(255, data.led.leds[id][2] + (fb == 0 ? -1 : 1) * delta));
+        data.led.leds[id] = [r, g, b, 255];
     }
 }
 
