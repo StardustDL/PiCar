@@ -12,6 +12,7 @@ An embedded application for toy-car controlling based on Raspberry Pi 3 Model B 
   - Going foreward or backward
   - Turning left or right
 - Infrared remote control
+- Obstacle avoidance
 - Self tracing
 - Real-time camera
 - Monitor and control by web
@@ -30,9 +31,9 @@ There is a demo which uses a fake car implement. It is fully Python codes, so it
 python -m picar --demo
 ```
 
-Visit `http://localhost:19090` to control the toy car from browser.
+Visit `http://PI_IP:19090` to control the toy car from browser.
 
-The API of the website is at `http://localhost:19090/api/`.
+The API of the website is at `http://PI_IP:19090/api/`.
 
 ## Dependencies
 
