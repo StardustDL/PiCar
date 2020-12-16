@@ -148,7 +148,7 @@ class Car:
         if self.controller_st is not None:
             return
         self.controller_st = CarController(
-            self, selfTraceController, diff=diff, speed=speed, interval=interval)
+            self, selfTraceController, speed=speed, interval=interval)
         self.controller_st.run()
 
     def stop_controller_st(self):
