@@ -61,7 +61,7 @@ def selfTraceController(cc: CarController, start=None, diff=500, speed=10, inter
             cc.car.right(speed)
         elif l != 0 and r == 0:
             cc.car.left(speed)
-        elif l != 0 and r != 0:
+        elif l == 0 and r == 0:
             cc.car.back(speed)
         else:
             current = cc.car.irsensor.analog()
