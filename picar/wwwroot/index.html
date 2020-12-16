@@ -25,6 +25,12 @@
 
 				</ul>
 				<div class="btn-group mr-2" role="group">
+                                        <button class="btn"
+						:class="{ 'btn-outline-danger': controller.oa, 'btn-outline-success': !controller.oa}"
+						@click="onToggleOA">
+						<span class="mdi" :class="{ 'mdi-car-off': controller.oa, 'mdi-car': !controller.oa}"></span>
+						{{ controller.oa ? "Disable obstacle avoidance" : "Enable obstacle avoidance" }}
+					</button>
 					<button class="btn"
 						:class="{ 'btn-outline-danger': controller.st, 'btn-outline-success': !controller.st}"
 						@click="onToggleST">

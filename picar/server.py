@@ -115,6 +115,7 @@ class WebServer:
         controller = {
             "ir": self.car.controller_ir is not None,
             "st": self.car.controller_st is not None,
+            "oa": self.car.controller_oa is not None,
         }
 
         state = {
@@ -167,6 +168,13 @@ class WebServer:
                 stdown = controller.get("st_down")
                 if stdown:
                     self.car.stop_controller_st()
+                
+                oaup = controller.get("oa_up")
+                if oaup:
+                    self.car.start_controller_oa(**oaup)
+                oadown = controller.get("oa_down")
+                if oadown:
+                    self.car.stop_controller_oa()
 
             return _plain("Success")
         except:

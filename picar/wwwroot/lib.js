@@ -92,18 +92,24 @@ function irdown() {
     data.controller.ir_down = [true];
 }
 
-function stup(start = null, diff = 500, speed = 10, interval = 0.3) {
+function stup(speed = 5, interval = 0.1) {
     data.controller.st_up = {
-        diff: diff,
         speed: speed,
         interval: interval
     }
-    if (start != null) {
-        data.st_up.start = start
-    }
-
 }
 
 function stdown() {
     data.controller.st_down = [true];
+}
+
+function oaup(speed = 20, interval = 0.3) {
+    data.controller.oa_up = {
+        speed: speed,
+        interval: interval
+    }
+}
+
+function oadown() {
+    data.controller.oa_down = [true];
 }

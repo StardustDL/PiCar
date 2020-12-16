@@ -49,35 +49,47 @@ def infraredRemoteController(cc: CarController, speed=10):
             cc.car.line(speed=speed)
         time.sleep(0.1)
 
-
-def selfTraceController(cc: CarController, start=None, diff=500, speed=10, interval=0.3):
-    if start is None or len(start) != 5:
-        start = cc.car.irsensor.analog()
+def obstacleAvoidanceController(cc: CarController, speed=20, interval=0.3):
     while not cc.closed:
         l = cc.car.irsensor.left()
         r = cc.car.irsensor.right()
 
         if l == 0 and r != 0:
             cc.car.right(speed)
+            time.sleep(interval)
         elif l != 0 and r == 0:
             cc.car.left(speed)
+            time.sleep(interval)
         elif l == 0 and r == 0:
             cc.car.back(speed)
+            time.sleep(interval)
         else:
-            current = cc.car.irsensor.analog()
-
-            dis = 0
-            for i in range(5):
-                dis += abs(start[i] - current[i])
-
-            if dis > diff:
-                if random.randint(0, 1) == 0:
-                    cc.car.left(speed)
-                else:
-                    cc.car.right(speed)
+            ri = random.randint(1, 20)
+            if ri == 1:
+                cc.car.left(speed)
+            elif ri == 2:
+                cc.car.right(speed)
             else:
-                cc.car.line(speed, 0)
+                cc.car.line(speed, 0) 
+    time.sleep(interval)
 
+
+def selfTraceController(cc: CarController, speed=5, interval=0.1):
+    while not cc.closed:
+        current = cc.car.irsensor.analog()
+
+        isBlack = [ x < 500 for x in current]
+
+        if True not in isBlack:
+            ind = 2
+        else:
+            ind = isBlack.index(True)
+        if ind < 2:
+            cc.car.left(speed)
+        elif ind > 2:
+            cc.car.right(speed)
+        else:
+            cc.car.line(speed, 0)
         time.sleep(interval)
 
 
@@ -103,6 +115,7 @@ class Car:
         # self.servo = servo.ServoManager()
         self.motors = (self.motorA, self.motorB)
         self.controller_ir = None
+        self.controller_oa = None
         self.controller_st = None
 
     def start_controller_ir(self, speed=10):
@@ -118,11 +131,24 @@ class Car:
         self.controller_ir.shutdown()
         self.controller_ir = None
 
-    def start_controller_st(self, start=None, diff=500, speed=10, interval=0.3):
+    def start_controller_oa(self, speed=20, interval=0.3):
+        if self.controller_oa is not None:
+            return
+        self.controller_oa = CarController(
+            self, obstacleAvoidanceController, speed=speed, interval=interval)
+        self.controller_oa.run()
+
+    def stop_controller_oa(self):
+        if self.controller_oa is None:
+            return
+        self.controller_oa.shutdown()
+        self.controller_oa = None
+
+    def start_controller_st(self, speed=5, interval=0.1):
         if self.controller_st is not None:
             return
         self.controller_st = CarController(
-            self, selfTraceController, start=start, diff=diff, speed=speed, interval=interval)
+            self, selfTraceController, diff=diff, speed=speed, interval=interval)
         self.controller_st.run()
 
     def stop_controller_st(self):

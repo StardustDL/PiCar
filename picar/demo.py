@@ -48,6 +48,7 @@ class FakeCar:
         self.motors = (self.motorA, self.motorB)
         self.controller_ir = None
         self.controller_st = None
+        self.controller_oa = None
 
     def start_controller_ir(self, speed=10):
         if self.controller_ir is not None:
@@ -62,11 +63,24 @@ class FakeCar:
         self.controller_ir.shutdown()
         self.controller_ir = None
 
-    def start_controller_st(self, start=None, diff=100, speed=10, interval=0.3):
+    def start_controller_oa(self, speed=20, interval=0.3):
+        if self.controller_oa is not None:
+            return
+        self.controller_oa = car.CarController(
+            self, car.obstacleAvoidanceController, speed=speed, interval=interval)
+        self.controller_oa.run()
+
+    def stop_controller_oa(self):
+        if self.controller_oa is None:
+            return
+        self.controller_oa.shutdown()
+        self.controller_oa = None
+
+    def start_controller_st(self, speed=5, interval=0.1):
         if self.controller_st is not None:
             return
         self.controller_st = car.CarController(
-            self, car.selfTraceController, start=start, diff=diff, speed=speed, interval=interval)
+            self, car.selfTraceController, speed=speed, interval=interval)
         self.controller_st.run()
 
     def stop_controller_st(self):

@@ -22,7 +22,8 @@ const App = {
             },
             controller: {
                 ir: false,
-                st: false
+                st: false,
+                oa: false,
             },
             model: {
                 led: {
@@ -112,6 +113,7 @@ const App = {
                 this.motor.B.speed = data.motor.B.speed;
                 this.controller.ir = data.controller.ir;
                 this.controller.st = data.controller.st;
+                this.controller.oa = data.controller.oa;
 
                 if (window.userFunc) {
                     try {
@@ -167,6 +169,14 @@ const App = {
             }
             else {
                 this.runOnce(`stup();`);
+            }
+        },
+        onToggleOA(event) {
+            if (this.controller.oa) {
+                this.runOnce(`oadown();`);
+            }
+            else {
+                this.runOnce(`oaup();`);
             }
         },
         onRandomLED(event) {
