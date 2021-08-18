@@ -1,4 +1,4 @@
-# PiCar
+![PiCar](https://socialify.git.ci/StardustDL/PiCar/image?description=1&font=Bitter&forks=1&issues=1&language=1&owner=1&pulls=1&stargazers=1&theme=Light)
 
 An embedded application for toy-car controlling based on Raspberry Pi 3 Model B and AlphaBot2-Pi.
 
